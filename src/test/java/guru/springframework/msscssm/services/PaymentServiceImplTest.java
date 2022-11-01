@@ -44,4 +44,21 @@ class PaymentServiceImplTest {
 
         System.out.println(preAuthedPayment);
     }
+
+    @Test
+    void testAuth() {
+        Payment savedPayment = paymentService.newPayment(payment);
+
+        StateMachine<PaymentState, PaymentEvent> preAuthSM = paymentService.preAuth(savedPayment.getId());
+
+        if (preAuthSM.getState().getId() == PaymentState.PRE_AUTH) {
+            System.out.println("Payment is Pre Authorized");
+
+            StateMachine<PaymentState, PaymentEvent> authSM = paymentService.authorizePayment(savedPayment.getId());
+
+            System.out.println("Result of Auth: " + authSM.getState().getId());
+        } else {
+            System.out.println("Payment failed pre-auth...");
+        }
+    }
 }
